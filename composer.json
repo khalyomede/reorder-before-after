@@ -1,0 +1,48 @@
+{
+    "name": "khalyomede/reorder-before-after",
+    "description": "Reorder an item in an array before or after another.",
+    "type": "library",
+    "license": "MIT",
+    "version": "0.1.0",
+    "keywords": [
+        "reorder",
+        "sort",
+        "before",
+        "after"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Khalyomede\\ReorderBeforeAfter\\": "src/",
+            "Tests\\": "tests"
+        }
+    },
+    "authors": [
+        {
+            "name": "Khalyomede",
+            "email": "khalyomede@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpstan/phpstan": "1.9.9",
+        "pestphp/pest": "1.22.3",
+        "phpstan/phpstan-strict-rules": "1.4.5",
+        "friendsofphp/php-cs-fixer": "3.13.2",
+        "rector/rector": "0.15.4"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "test": "pest",
+        "analyse": "phpstan",
+        "lint": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix --diff --using-cache=no --allow-risky=yes --dry-run",
+        "format": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer --using-cache=no --allow-risky=yes fix",
+        "check": "composer audit --locked --no-dev",
+        "updates": "composer outdated --direct --strict --ignore nunomaduro/larastan",
+        "scan": "rector process --dry-run",
+        "modernize": "rector process"
+    }
+}
