@@ -1,0 +1,33 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  php_82:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Tests
+        run: docker-compose run composer run test
+      - name: Static analysis
+        run: docker-compose run composer run analyse
+      - name: Lint
+        run: docker-compose run composer run lint
+      - name: Security check
+        run: docker-compose run composer run check
+      - name: Updates check
+        run: docker-compose run composer run updates
+      - name: Code modernity check
+        run: docker-compose run composer run scan
