@@ -81,6 +81,14 @@ final class Listing
         return $item;
     }
 
+    /**
+     * @return array<mixed>
+     */
+    public function all(): array
+    {
+        return array_values(array_map(fn (Item $item): mixed => $item->value, $this->items));
+    }
+
     private function sortItems(): void
     {
         usort($this->items, fn (Item $left, Item $right): int => $left->order <=> $right->order);

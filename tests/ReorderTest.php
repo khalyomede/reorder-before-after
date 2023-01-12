@@ -163,3 +163,19 @@ test("throws an exception if creating a listing from an array of non Item", func
         ["table", 4],
     ]))->toThrow(TypeError::class, 'Khalyomede\ReorderBeforeAfter\Listing::Khalyomede\ReorderBeforeAfter\{closure}(): Argument #1 ($item) must be of type Khalyomede\ReorderBeforeAfter\Item, array given');
 });
+
+test("can get back all items from a listing", function (): void {
+    $listing = Listing::from([
+        new Item("bag", 1),
+        new Item("book", 2),
+        new Item("chair", 3),
+        new Item("table", 4),
+    ]);
+
+    $items = $listing->all();
+
+    expect($items[0])->toBe("bag");
+    expect($items[1])->toBe("book");
+    expect($items[2])->toBe("chair");
+    expect($items[3])->toBe("table");
+});
