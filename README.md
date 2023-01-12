@@ -41,6 +41,7 @@ composer require khalyomede/reorder-before-after
 - [2. Create a list of items out of any type](#2-create-a-list-of-items-out-of-any-type)
 - [3. Find an item by its value](#3-find-an-item-by-its-value)
 - [4. Create a listing from an array](#4-create-a-listing-from-an-array)
+- [5. Getting all items from a listing](#5-getting-all-items-from-a-listing)
 
 ### 1. Moving an item before another
 
@@ -161,6 +162,27 @@ $listing = Listing::from([
 $listing->reorder("bag", Placement::After, "book");
 
 assert($listing->find("bag")->order === 3);
+```
+
+### 5. Getting all items from a listing
+
+In this example, we will get all items from a listing. Useful if you want to perform some task after reordering your items.
+
+```php
+use Khalyomede\ReorderBeforeAfter\Listing;
+
+$listing = Listing::from([
+    new Item("bag", 1),
+    new Item("chair", 2),
+    new Item("book", 3),
+    new Item("table", 4),
+]);
+
+$products = $listing->all();
+
+foreach ($products as $product) {
+    echo $product; // "bag" or "chair" or "book" or "table"
+}
 ```
 
 ## Tests
