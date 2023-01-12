@@ -43,6 +43,7 @@
         "check": "composer audit --locked --no-dev",
         "updates": "composer outdated --direct --strict --ignore nunomaduro/larastan",
         "scan": "rector process --dry-run",
-        "modernize": "rector process"
+        "modernize": "rector process",
+        "all": "composer run test && composer run analyse && composer run lint && composer run check && composer run updates && composer run scan"
     }
 }

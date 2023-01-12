@@ -195,3 +195,9 @@ composer run check
 composer run updates
 composer run scan
 ```
+
+Or
+
+```bash
+composer run all
+```
