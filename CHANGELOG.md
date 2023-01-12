@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Ability to create the listing from an array ([#3](https://github.com/khalyomede/reorder-before-after/issues/3)).
+
 ## [0.1.0] - 2023-01-11
 
 ### Added

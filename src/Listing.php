@@ -19,6 +19,20 @@ final class Listing
         $this->items = [];
     }
 
+    /**
+     * @param array<Item> $items
+     */
+    public static function from(array $items): self
+    {
+        $listing = new self();
+
+        array_map(function (Item $item) use ($listing): void {
+            $listing->push($item);
+        }, $items);
+
+        return $listing;
+    }
+
     public function push(Item $item): void
     {
         $this->items[] = $item;

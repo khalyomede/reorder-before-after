@@ -40,6 +40,7 @@ composer require khalyomede/reorder-before-after
 - [1. Moving an item before another](#1-moving-an-item-before-another)
 - [2. Create a list of items out of any type](#2-create-a-list-of-items-out-of-any-type)
 - [3. Find an item by its value](#3-find-an-item-by-its-value)
+- [4. Create a listing from an array](#4-create-a-listing-from-an-array)
 
 ### 1. Moving an item before another
 
@@ -141,6 +142,25 @@ $listing->push(new Item($tables, 2));
 $listing->push(new Item($chairs, 3));
 
 echo $listing->find($bags); // Item(value: Product(name: "bag", quantity: 15, unitPrice: 149.99), order: 1)
+```
+
+### 4. Create a listing from an array
+
+In this example, we will create the listing from an array instead of manually pushing items.
+
+```php
+use Khalyomede\ReorderBeforeAfter\Listing;
+
+$listing = Listing::from([
+    new Item("bag", 1),
+    new Item("chair", 2),
+    new Item("book", 3),
+    new Item("table", 4),
+]);
+
+$listing->reorder("bag", Placement::After, "book");
+
+assert($listing->find("bag")->order === 3);
 ```
 
 ## Tests
