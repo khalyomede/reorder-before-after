@@ -100,7 +100,7 @@ final class Listing
 
         $parameter = array_shift($parameters);
 
-        if (!($parameter->hasType()) || $parameter->getType()->getName() !== Item::class) {
+        if (!($parameter->hasType()) || (string) $parameter->getType() !== Item::class) {
             throw new InvalidApplyWithCallbackException("Your callback must be type hinted with " . Item::class);
         }
 

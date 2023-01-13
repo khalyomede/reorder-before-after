@@ -194,7 +194,14 @@ test("can apply the order using a callback", function (): void {
         new Item($table, 4),
     ]);
 
-    $listing->applyWith(fn (Item $item): int => $item->value->order = $item->order);
+    $listing->applyWith(function (Item $item): void {
+        $product = $item->value;
+
+        assert($product instanceof Product);
+
+        $product->order = $item->order;
+    });
+
     $listing->reorder($listing->find($table), Placement::Before, $listing->find($chair));
 
     expect($bag->order)->toBe(1);
