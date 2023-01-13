@@ -42,6 +42,7 @@ composer require khalyomede/reorder-before-after
 - [3. Find an item by its value](#3-find-an-item-by-its-value)
 - [4. Create a listing from an array](#4-create-a-listing-from-an-array)
 - [5. Getting all items from a listing](#5-getting-all-items-from-a-listing)
+- [6. Use a callback to apply the order on your value](#6-use-a-callback-to-apply-the-order-on-your-value)
 
 ### 1. Moving an item before another
 
@@ -183,6 +184,25 @@ $products = $listing->all();
 foreach ($products as $product) {
     echo $product; // "bag" or "chair" or "book" or "table"
 }
+```
+
+### 6. Use a callback to apply the order on your value
+
+In this example, we will instruct the listing how it should set the order on our values. Useful if our values are objects holding their order. This saves you from looping again on all your objects.
+
+This examples features an hypothetical `Product` [Eloquent](https://laravel.com/docs/master/eloquent) model.
+
+```php
+use App\Models\Product;
+use Khalyomede\ReorderBeforeAfter\Listing;
+
+$items = Product::all()->map(fn (Product $product): Item => new Item($product, $product->order));
+$listing = Listing::from($items);
+
+$listing->applyWith(function (Item $item): void {
+    $item->value->order = $item->order;
+    $item->value->save();
+});
 ```
 
 ## Tests

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidApplyWithCallbackException;
 use Khalyomede\ReorderBeforeAfter\Item;
 use Khalyomede\ReorderBeforeAfter\Listing;
 use Khalyomede\ReorderBeforeAfter\Placement;
@@ -128,9 +129,9 @@ test("does nothing if reordering string item after itself", function (): void {
 });
 
 test("can find object item", function (): void {
-    $bags = new Product(name: "bags", quantity: 15, unitPrice: 149.99);
-    $tables = new Product(name: "tables", quantity: 4, unitPrice: 89.99);
-    $chairs = new Product(name: "chairs", quantity: 1, unitPrice: 399.99);
+    $bags = new Product(name: "bags", quantity: 15, unitPrice: 149.99, order: 1);
+    $tables = new Product(name: "tables", quantity: 4, unitPrice: 89.99, order: 2);
+    $chairs = new Product(name: "chairs", quantity: 1, unitPrice: 399.99, order: 3);
 
     $list = new Listing();
     $list->push(new Item($bags, 1));
@@ -178,4 +179,57 @@ test("can get back all items from a listing", function (): void {
     expect($items[1])->toBe("book");
     expect($items[2])->toBe("chair");
     expect($items[3])->toBe("table");
+});
+
+test("can apply the order using a callback", function (): void {
+    $bag = new Product(name: "bag", quantity: 12, unitPrice: 19.99, order: 1);
+    $book = new Product(name: "book", quantity: 12, unitPrice: 99.99, order: 2);
+    $chair = new Product(name: "chair", quantity: 12, unitPrice: 39.99, order: 3);
+    $table = new Product(name: "table", quantity: 12, unitPrice: 29.99, order: 4);
+
+    $listing = Listing::from([
+        new Item($bag, 1),
+        new Item($book, 2),
+        new Item($chair, 3),
+        new Item($table, 4),
+    ]);
+
+    $listing->applyWith(function (Item $item): void {
+        $product = $item->value;
+
+        assert($product instanceof Product);
+
+        $product->order = $item->order;
+    });
+
+    $listing->reorder($listing->find($table), Placement::Before, $listing->find($chair));
+
+    expect($bag->order)->toBe(1);
+    expect($book->order)->toBe(2);
+    expect($table->order)->toBe(3);
+    expect($chair->order)->toBe(4);
+});
+
+test("throws exception if the apply with a callback without parameters", function (): void {
+    $listing = new Listing();
+
+    expect(function () use ($listing): void {
+        $listing->applyWith(fn (): int => 1);
+    })->toThrow(InvalidApplyWithCallbackException::class, "Your callback must have exactly one parameter");
+});
+
+test("throws exception if the apply with a callback without type hint", function (): void {
+    $listing = new Listing();
+
+    expect(function () use ($listing): void {
+        $listing->applyWith(fn ($item): int => 1);
+    })->toThrow(InvalidApplyWithCallbackException::class, "Your callback must be type hinted with " . Item::class);
+});
+
+test("throws exception if the apply with a callback without Item type hint", function (): void {
+    $listing = new Listing();
+
+    expect(function () use ($listing): void {
+        $listing->applyWith(fn (Product $item): int => 1);
+    })->toThrow(InvalidApplyWithCallbackException::class, "Your callback must be type hinted with " . Item::class);
 });
