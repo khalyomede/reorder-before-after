@@ -9,6 +9,7 @@ use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidApplyWithCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\ItemNotFoundException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\TooManyItemsException;
 use ReflectionFunction;
+use ReflectionNamedType;
 
 final class Listing
 {
@@ -100,7 +101,13 @@ final class Listing
 
         $parameter = array_shift($parameters);
 
-        if (!($parameter->hasType()) || (string) $parameter->getType() !== Item::class) {
+        if (!($parameter->hasType())) {
+            throw new InvalidApplyWithCallbackException("Your callback must be type hinted with " . Item::class);
+        }
+
+        $type = $parameter->getType();
+
+        if (!($type instanceof ReflectionNamedType) || $type->getName() !== Item::class) {
             throw new InvalidApplyWithCallbackException("Your callback must be type hinted with " . Item::class);
         }
 
