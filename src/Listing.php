@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Khalyomede\ReorderBeforeAfter;
 
+use Closure;
+use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidApplyWithCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\ItemNotFoundException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\TooManyItemsException;
+use ReflectionFunction;
 
 final class Listing
 {
@@ -14,9 +17,13 @@ final class Listing
      */
     private array $items;
 
+    private Closure $applyWith;
+
     public function __construct()
     {
         $this->items = [];
+        $this->applyWith = function (): void {
+        };
     }
 
     /**
@@ -79,6 +86,25 @@ final class Listing
         }
 
         return $item;
+    }
+
+    public function applyWith(Closure $callback): void
+    {
+        $reflection = new ReflectionFunction($callback);
+
+        $parameters = $reflection->getParameters();
+
+        if (count($parameters) !== 1) {
+            throw new InvalidApplyWithCallbackException("Your callback must have exactly one parameter");
+        }
+
+        $parameter = array_shift($parameters);
+
+        if (!($parameter->hasType()) || $parameter->getType()->getName() !== Item::class) {
+            throw new InvalidApplyWithCallbackException("Your callback must be type hinted with " . Item::class);
+        }
+
+        $this->applyWith = $callback;
     }
 
     /**
@@ -150,6 +176,8 @@ final class Listing
 
         foreach ($this->items as $item) {
             $item->order = $index;
+
+            call_user_func($this->applyWith, $item);
 
             $index += 1;
         }
