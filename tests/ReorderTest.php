@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Khalyomede\ReorderBeforeAfter\Exceptions\BadOutOfCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidApplyWithCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\ItemNotFoundException;
 use Khalyomede\ReorderBeforeAfter\Item;
@@ -251,4 +252,26 @@ test("throws exception if reordering an item before one that does not exist", fu
     expect(function () use ($listing): void {
         $listing->reorder("bag", Placement::Before, "table");
     })->toThrow(ItemNotFoundException::class, "No item match the value");
+});
+
+test("it creates a listing out of an array of object", function (): void {
+    $bag = new Product(name: "bag", quantity: 12, unitPrice: 19.99, order: 1);
+    $book = new Product(name: "book", quantity: 12, unitPrice: 99.99, order: 2);
+    $chair = new Product(name: "chair", quantity: 12, unitPrice: 39.99, order: 3);
+    $table = new Product(name: "table", quantity: 12, unitPrice: 29.99, order: 4);
+
+    $products = [$bag, $book, $chair, $table];
+
+    $listing = Listing::outOf($products, fn (Product $product): Item => new Item($product, $product->order));
+
+    expect($listing->find($bag)->order)->toBe(1);
+    expect($listing->find($book)->order)->toBe(2);
+    expect($listing->find($chair)->order)->toBe(3);
+    expect($listing->find($table)->order)->toBe(4);
+});
+
+test("throws exception if the callback used to create a list out of objects specify a wrong type hint", function (): void {
+    expect(function (): void {
+        Listing::outOf([], fn ($value): string => "");
+    })->toThrow(BadOutOfCallbackException::class, "Your callback must have an Item return type hint");
 });
