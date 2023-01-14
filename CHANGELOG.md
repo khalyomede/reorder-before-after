@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to set a callback to apply the order on your value ([#1](https://github.com/khalyomede/reorder-before-after/issues/10)).
 - Support for PHP 8.1 ([#10](https://github.com/khalyomede/reorder-before-after/issues/10)).
 - Reordering using the raw value instead of passing an Item ([#8](https://github.com/khalyomede/reorder-before-after/issues/8)).
+- Ability to create a listing from values, and specifying how to retrieve the order ([#9](https://github.com/khalyomede/reorder-before-after/issues/9)).
 
 ## [0.1.0] - 2023-01-11
 

@@ -43,6 +43,7 @@ composer require khalyomede/reorder-before-after
 - [4. Create a listing from an array](#4-create-a-listing-from-an-array)
 - [5. Getting all items from a listing](#5-getting-all-items-from-a-listing)
 - [6. Use a callback to apply the order on your value](#6-use-a-callback-to-apply-the-order-on-your-value)
+- [7. Create a listing from values and specify how to retrieve the order using a callback](#7-create-a-listing-from-values-and-specify-how-to-retrieve-the-order-using-a-callback)
 
 ### 1. Moving an item before another
 
@@ -203,6 +204,20 @@ $listing->applyWith(function (Item $item): void {
     $item->value->order = $item->order;
     $item->value->save();
 });
+```
+
+### 7. Create a listing from values and specify how to retrieve the order using a callback
+
+In this example, we will see how to create a listing out of an array of values, and using the second parameter to specify how to get the order from these values.
+
+Useful if you have objects that already hold their own order, and you do not want to loop from them and create the `Item` by hand.
+
+```php
+use App\Models\Product;
+use Khalyomede\ReorderBeforeAfter\Listing;
+
+$products = Product::all();
+$listing = Listing::outOf($products, fn (Product $product): Item => new Item($product, $product->order));
 ```
 
 ## Tests
