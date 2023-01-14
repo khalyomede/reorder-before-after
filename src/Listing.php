@@ -46,19 +46,22 @@ final class Listing
         $this->items[] = $item;
     }
 
-    public function reorder(Item $item, Placement $placement, Item $reference): void
+    public function reorder(mixed $value, Placement $placement, mixed $reference): void
     {
         $this->sortItems();
 
-        if ($item !== $reference) {
+        if ($value !== $reference) {
+            $item = $this->find($value);
+            $referenceItem = $this->find($reference);
+
             $this->removeItem($item);
 
             if ($placement->isBefore()) {
-                $left = $this->itemsBefore($reference);
-                $right = $this->itemsAfter($reference, included: true);
+                $left = $this->itemsBefore($referenceItem);
+                $right = $this->itemsAfter($referenceItem, included: true);
             } else {
-                $left = $this->itemsBefore($reference, included: true);
-                $right = $this->itemsAfter($reference);
+                $left = $this->itemsBefore($referenceItem, included: true);
+                $right = $this->itemsAfter($referenceItem);
             }
 
             $this->items = array_merge($left, [$item], $right);
