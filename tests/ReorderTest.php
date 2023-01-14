@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Khalyomede\ReorderBeforeAfter\Exceptions\BadOutOfCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidApplyWithCallbackException;
+use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidMatchWithCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\ItemNotFoundException;
 use Khalyomede\ReorderBeforeAfter\Item;
 use Khalyomede\ReorderBeforeAfter\Listing;
@@ -274,4 +275,40 @@ test("throws exception if the callback used to create a list out of objects spec
     expect(function (): void {
         Listing::outOf([], fn ($value): string => "");
     })->toThrow(BadOutOfCallbackException::class, "Your callback must have an Item return type hint");
+});
+
+test("can specify how to match items together", function (): void {
+    $bag = new Product(name: "bag", quantity: 12, unitPrice: 19.99, order: 1);
+    $book = new Product(name: "book", quantity: 12, unitPrice: 99.99, order: 2);
+    $chair = new Product(name: "chair", quantity: 12, unitPrice: 39.99, order: 3);
+    $table = new Product(name: "table", quantity: 12, unitPrice: 29.99, order: 4);
+
+    $products = [$bag, $book, $chair, $table];
+
+    $listing = Listing::outOf($products, fn (Product $product): Item => new Item($product, $product->order));
+
+    $listing->matchWith(fn (Product $left, Product $right): bool => $left->name === $right->name);
+
+    $foundBag = $listing->find($bag)->value;
+    $foundBook = $listing->find($book)->value;
+    $foundChair = $listing->find($chair)->value;
+    $foundTable = $listing->find($table)->value;
+
+    assert($foundBag instanceof Product);
+    assert($foundBook instanceof Product);
+    assert($foundChair instanceof Product);
+    assert($foundTable instanceof Product);
+
+    expect($foundBag->name)->toBe("bag");
+    expect($foundBook->name)->toBe("book");
+    expect($foundChair->name)->toBe("chair");
+    expect($foundTable->name)->toBe("table");
+});
+
+test("throws an exception if the callback used to specify how to match items together does not specify a bool return type", function (): void {
+    $listing = new Listing();
+
+    expect(function () use ($listing): void {
+        $listing->matchWith(fn (mixed $left, mixed $right) => $left === $right);
+    })->toThrow(InvalidMatchWithCallbackException::class, "Your callback must have a bool return type");
 });

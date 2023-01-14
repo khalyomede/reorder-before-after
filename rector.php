@@ -10,6 +10,8 @@ use Rector\Php81\Rector\Array_\FirstClassCallableRector;
 use Rector\Privatization\Rector\Class_\ChangeReadOnlyVariableWithDefaultValueToConstantRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
+use Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector;
+use Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedCallRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
@@ -24,6 +26,12 @@ return static function (RectorConfig $rectorConfig): void {
         RemoveNonExistingVarAnnotationRector::class,
         RemoveLastReturnRector::class,
         ChangeReadOnlyVariableWithDefaultValueToConstantRector::class,
+        ReturnTypeFromStrictTypedCallRector::class => [
+            __DIR__ . "/tests/ReorderTest.php",
+        ],
+        AddArrowFunctionReturnTypeRector::class => [
+            __DIR__ . "/tests/ReorderTest.php",
+        ],
     ]);
 
     // define sets of rules

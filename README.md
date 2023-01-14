@@ -44,6 +44,7 @@ composer require khalyomede/reorder-before-after
 - [5. Getting all items from a listing](#5-getting-all-items-from-a-listing)
 - [6. Use a callback to apply the order on your value](#6-use-a-callback-to-apply-the-order-on-your-value)
 - [7. Create a listing from values and specify how to retrieve the order using a callback](#7-create-a-listing-from-values-and-specify-how-to-retrieve-the-order-using-a-callback)
+- [8. Specify how to match items together](#8-specify-how-to-match-items-together)
 
 ### 1. Moving an item before another
 
@@ -218,6 +219,24 @@ use Khalyomede\ReorderBeforeAfter\Listing;
 
 $products = Product::all();
 $listing = Listing::outOf($products, fn (Product $product): Item => new Item($product, $product->order));
+```
+
+### 8. Specify how to match items together
+
+In this example, we will instruct the listing how it should match our objects. Useful if your objects can contain different set of data, making the whole object different, when in reality both are equal (matching by id).
+
+This examples features an hypothetical `Product` [Eloquent](https://laravel.com/docs/master/eloquent) model, where one of the two can have more attributes (like eager loaded relationships), making the triple equal check invalid.
+
+```php
+use App\Models\Product;
+use Khalyomede\ReorderBeforeAfter\Listing;
+
+$listing = Listing::outOf(Product::all(), fn (Product $product): Item => new Item($product, $product->order));
+
+$listing->matchWith(fn (Product $left, Product $right): bool => $left->id === $right->id);
+
+// Or with the shorter Eloquent::is() method
+$listing->matchWith(fn (Product $left, Product $right): bool => $left->is($right));
 ```
 
 ## Tests
