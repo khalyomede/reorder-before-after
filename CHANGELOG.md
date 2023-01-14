@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Ability to specify how to match values together ([#15](https://github.com/khalyomede/reorder-before-after/issues/15)).
+- Typehints on closures for `Listing::outOf()` `Listing::applyWith()` and `Listing::matchWith()` ([#16](https://github.com/khalyomede/reorder-before-after/issues/16)).
 
 ### Breaking
 

@@ -20,8 +20,14 @@ final class Listing
      */
     private array $items;
 
+    /**
+     * @var Closure(Item): void
+     */
     private Closure $applyWith;
 
+    /**
+     * @var Closure(mixed, mixed): bool
+     */
     private Closure $matchWith;
 
     public function __construct()
@@ -48,6 +54,7 @@ final class Listing
 
     /**
      * @param array<mixed> $values
+     * @param Closure(mixed): Item $callback
      */
     public static function outOf(array $values, Closure $callback): self
     {
@@ -116,6 +123,9 @@ final class Listing
         return $item;
     }
 
+    /**
+     * @param Closure(Item): void $callback
+     */
     public function applyWith(Closure $callback): void
     {
         $reflection = new ReflectionFunction($callback);
@@ -141,6 +151,9 @@ final class Listing
         $this->applyWith = $callback;
     }
 
+    /**
+     * @param Closure(mixed, mixed): bool $callback
+     */
     public function matchWith(Closure $callback): void
     {
         self::checkMatchWithCallbackSignature($callback);
