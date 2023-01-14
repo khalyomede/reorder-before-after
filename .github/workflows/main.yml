@@ -33,3 +33,22 @@ jobs:
         run: docker-compose run composer run updates
       - name: Code modernity check
         run: docker-compose run composer run scan
+
+  php_81:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: docker-compose run composer81 install
+      - name: Tests
+        run: docker-compose run composer81 run test
+      - name: Static analysis
+        run: docker-compose run composer81 run analyse
+      - name: Lint
+        run: docker-compose run composer81 run lint
+      - name: Security check
+        run: docker-compose run composer81 run check
+      - name: Updates check
+        run: docker-compose run composer81 run updates
+      - name: Code modernity check
+        run: docker-compose run composer81 run scan

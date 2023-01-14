@@ -24,7 +24,7 @@ I did not find any package to do what I search for, and since I use it at multip
 
 ## Requirements
 
-- PHP >= 8.2
+- PHP >= 8.1
 - Composer
 
 ## Installation
