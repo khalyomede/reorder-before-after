@@ -7,6 +7,7 @@ namespace Khalyomede\ReorderBeforeAfter;
 use Closure;
 use Khalyomede\ReorderBeforeAfter\Exceptions\BadOutOfCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidApplyWithCallbackException;
+use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidMatchWithCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\ItemNotFoundException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\TooManyItemsException;
 use ReflectionFunction;
@@ -21,11 +22,14 @@ final class Listing
 
     private Closure $applyWith;
 
+    private Closure $matchWith;
+
     public function __construct()
     {
         $this->items = [];
         $this->applyWith = function (): void {
         };
+        $this->matchWith = fn (mixed $left, mixed $right): bool => $left === $right;
     }
 
     /**
@@ -85,7 +89,7 @@ final class Listing
 
     public function find(mixed $value): Item
     {
-        $items = array_filter($this->items, fn (Item $item): bool => $item->value === $value);
+        $items = array_filter($this->items, fn (Item $item): bool => call_user_func($this->matchWith, [$item->value, $value]));
         $numberOfItemsFound = count($items);
 
         if ($numberOfItemsFound > 1) {
@@ -128,6 +132,13 @@ final class Listing
         }
 
         $this->applyWith = $callback;
+    }
+
+    public function matchWith(Closure $callback): void
+    {
+        self::checkMatchWithCallbackSignature($callback);
+
+        $this->matchWith = $callback;
     }
 
     /**
@@ -203,6 +214,17 @@ final class Listing
             call_user_func($this->applyWith, $item);
 
             $index += 1;
+        }
+    }
+
+    private static function checkMatchWithCallbackSignature($callback): void
+    {
+        $reflection = new ReflectionFunction($callback);
+
+        $returnType = $reflection->getReturnType();
+
+        if (!($returnType instanceof ReflectionNamedType) || $returnType !== "bool") {
+            throw new InvalidMatchWithCallbackException("Your callback must have a bool return type");
         }
     }
 
