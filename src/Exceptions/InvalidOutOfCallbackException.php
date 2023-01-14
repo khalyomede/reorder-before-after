@@ -6,6 +6,6 @@ namespace Khalyomede\ReorderBeforeAfter\Exceptions;
 
 use Exception;
 
-final class BadOutOfCallbackException extends Exception
+final class InvalidOutOfCallbackException extends Exception
 {
 }
