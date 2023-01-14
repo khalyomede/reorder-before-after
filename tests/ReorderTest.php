@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Khalyomede\ReorderBeforeAfter\Exceptions\BadOutOfCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidApplyWithCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidMatchWithCallbackException;
+use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidOutOfCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\ItemNotFoundException;
 use Khalyomede\ReorderBeforeAfter\Item;
 use Khalyomede\ReorderBeforeAfter\Listing;
@@ -274,7 +274,7 @@ test("it creates a listing out of an array of object", function (): void {
 test("throws exception if the callback used to create a list out of objects specify a wrong type hint", function (): void {
     expect(function (): void {
         Listing::outOf([], fn ($value): string => "");
-    })->toThrow(BadOutOfCallbackException::class, "Your callback must have an Item return type hint");
+    })->toThrow(InvalidOutOfCallbackException::class, "Your callback must have an Item return type hint");
 });
 
 test("can specify how to match items together", function (): void {

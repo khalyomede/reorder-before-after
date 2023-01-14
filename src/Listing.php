@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Khalyomede\ReorderBeforeAfter;
 
 use Closure;
-use Khalyomede\ReorderBeforeAfter\Exceptions\BadOutOfCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidApplyWithCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidMatchWithCallbackException;
+use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidOutOfCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\ItemNotFoundException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\TooManyItemsException;
 use ReflectionFunction;
@@ -241,7 +241,7 @@ final class Listing
         $returnType = $reflection->getReturnType();
 
         if (!($returnType instanceof ReflectionNamedType) || $returnType->getName() !== Item::class) {
-            throw new BadOutOfCallbackException("Your callback must have an Item return type hint");
+            throw new InvalidOutOfCallbackException("Your callback must have an Item return type hint");
         }
     }
 }
