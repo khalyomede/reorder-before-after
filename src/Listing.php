@@ -89,7 +89,14 @@ final class Listing
 
     public function find(mixed $value): Item
     {
-        $items = array_filter($this->items, fn (Item $item): bool => call_user_func($this->matchWith, [$item->value, $value]));
+        $items = array_filter($this->items, function (Item $item) use ($value): bool {
+            $match = call_user_func_array($this->matchWith, [$item->value, $value]);
+
+            assert(is_bool($match));
+
+            return $match;
+        });
+
         $numberOfItemsFound = count($items);
 
         if ($numberOfItemsFound > 1) {
@@ -217,13 +224,13 @@ final class Listing
         }
     }
 
-    private static function checkMatchWithCallbackSignature($callback): void
+    private static function checkMatchWithCallbackSignature(Closure $callback): void
     {
         $reflection = new ReflectionFunction($callback);
 
         $returnType = $reflection->getReturnType();
 
-        if (!($returnType instanceof ReflectionNamedType) || $returnType !== "bool") {
+        if (!($returnType instanceof ReflectionNamedType) || $returnType->getName() !== "bool") {
             throw new InvalidMatchWithCallbackException("Your callback must have a bool return type");
         }
     }

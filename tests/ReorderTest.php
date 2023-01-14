@@ -289,10 +289,20 @@ test("can specify how to match items together", function (): void {
 
     $listing->matchWith(fn (Product $left, Product $right): bool => $left->name === $right->name);
 
-    expect($listing->find($bag)->value->name)->toBe("bag");
-    expect($listing->find($book)->value->name)->toBe("book");
-    expect($listing->find($chair)->value->name)->toBe("chair");
-    expect($listing->find($table)->value->name)->toBe("table");
+    $foundBag = $listing->find($bag)->value;
+    $foundBook = $listing->find($book)->value;
+    $foundChair = $listing->find($chair)->value;
+    $foundTable = $listing->find($table)->value;
+
+    assert($foundBag instanceof Product);
+    assert($foundBook instanceof Product);
+    assert($foundChair instanceof Product);
+    assert($foundTable instanceof Product);
+
+    expect($foundBag->name)->toBe("bag");
+    expect($foundBook->name)->toBe("book");
+    expect($foundChair->name)->toBe("chair");
+    expect($foundTable->name)->toBe("table");
 });
 
 test("throws an exception if the callback used to specify how to match items together does not specify a bool return type", function (): void {
@@ -300,5 +310,5 @@ test("throws an exception if the callback used to specify how to match items tog
 
     expect(function () use ($listing): void {
         $listing->matchWith(fn (mixed $left, mixed $right) => $left === $right);
-    })->toThrow(InvalidMatchWithCallbackException::class, "Your callback must have a bool return type hint");
+    })->toThrow(InvalidMatchWithCallbackException::class, "Your callback must have a bool return type");
 });
