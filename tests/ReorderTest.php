@@ -217,6 +217,7 @@ test("throws exception if the apply with a callback without parameters", functio
     $listing = new Listing();
 
     expect(function () use ($listing): void {
+        /** @phpstan-ignore-next-line */
         $listing->applyWith(fn (): int => 1);
     })->toThrow(InvalidApplyWithCallbackException::class, "Your callback must have exactly one parameter");
 });
@@ -225,6 +226,7 @@ test("throws exception if the apply with a callback without type hint", function
     $listing = new Listing();
 
     expect(function () use ($listing): void {
+        /** @phpstan-ignore-next-line */
         $listing->applyWith(fn ($item): int => 1);
     })->toThrow(InvalidApplyWithCallbackException::class, "Your callback must be type hinted with " . Item::class);
 });
@@ -233,6 +235,7 @@ test("throws exception if the apply with a callback without Item type hint", fun
     $listing = new Listing();
 
     expect(function () use ($listing): void {
+        /** @phpstan-ignore-next-line */
         $listing->applyWith(fn (Product $item): int => 1);
     })->toThrow(InvalidApplyWithCallbackException::class, "Your callback must be type hinted with " . Item::class);
 });
@@ -273,6 +276,7 @@ test("it creates a listing out of an array of object", function (): void {
 
 test("throws exception if the callback used to create a list out of objects specify a wrong type hint", function (): void {
     expect(function (): void {
+        /** @phpstan-ignore-next-line */
         Listing::outOf([], fn ($value): string => "");
     })->toThrow(InvalidOutOfCallbackException::class, "Your callback must have an Item return type hint");
 });

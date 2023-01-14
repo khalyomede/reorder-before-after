@@ -9,3 +9,4 @@ parameters:
         - '#Pest#'
     excludePaths:
         - tests/Pest.php
+    checkExplicitMixed: false
