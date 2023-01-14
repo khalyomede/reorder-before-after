@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidApplyWithCallbackException;
+use Khalyomede\ReorderBeforeAfter\Exceptions\ItemNotFoundException;
 use Khalyomede\ReorderBeforeAfter\Item;
 use Khalyomede\ReorderBeforeAfter\Listing;
 use Khalyomede\ReorderBeforeAfter\Placement;
@@ -15,7 +16,7 @@ test("can reorder string item before another one in the middle of the list", fun
     $list->push(new Item("book", 3));
     $list->push(new Item("bag", 4));
 
-    $list->reorder($list->find("bag"), Placement::Before, $list->find("table"));
+    $list->reorder("bag", Placement::Before, "table");
 
     expect($list->find("bag")->order)->toBe(1);
     expect($list->find("table")->order)->toBe(2);
@@ -30,7 +31,7 @@ test("can reorder string item after another one in the middle of the list", func
     $list->push(new Item("chair", 3));
     $list->push(new Item("book", 4));
 
-    $list->reorder($list->find("table"), Placement::After, $list->find("chair"));
+    $list->reorder("table", Placement::After, "chair");
 
     expect($list->find("bag")->order)->toBe(1);
     expect($list->find("chair")->order)->toBe(2);
@@ -45,7 +46,7 @@ test("can reorder string item before another one in the end of the list", functi
     $list->push(new Item("chair", 3));
     $list->push(new Item("table", 4));
 
-    $list->reorder($list->find("bag"), Placement::Before, $list->find("chair"));
+    $list->reorder("bag", Placement::Before, "chair");
 
     expect($list->find("book")->order)->toBe(1);
     expect($list->find("bag")->order)->toBe(2);
@@ -60,7 +61,7 @@ test("can reorder string item after another one in the end of the list", functio
     $list->push(new Item("chair", 3));
     $list->push(new Item("table", 4));
 
-    $list->reorder($list->find("book"), Placement::After, $list->find("table"));
+    $list->reorder("book", Placement::After, "table");
 
     expect($list->find("bag")->order)->toBe(1);
     expect($list->find("chair")->order)->toBe(2);
@@ -75,7 +76,7 @@ test("can reorder string item before another one in the begining of the list", f
     $list->push(new Item("chair", 3));
     $list->push(new Item("table", 4));
 
-    $list->reorder($list->find("chair"), Placement::Before, $list->find("bag"));
+    $list->reorder("chair", Placement::Before, "bag");
 
     expect($list->find("chair")->order)->toBe(1);
     expect($list->find("bag")->order)->toBe(2);
@@ -90,7 +91,7 @@ test("can reorder string item after another one in the begining of the list", fu
     $list->push(new Item("chair", 3));
     $list->push(new Item("table", 4));
 
-    $list->reorder($list->find("chair"), Placement::After, $list->find("bag"));
+    $list->reorder("chair", Placement::After, "bag");
 
     expect($list->find("bag")->order)->toBe(1);
     expect($list->find("chair")->order)->toBe(2);
@@ -105,7 +106,7 @@ test("does nothing if reordering string item before itself", function (): void {
     $list->push(new Item("chair", 3));
     $list->push(new Item("table", 4));
 
-    $list->reorder($list->find("bag"), Placement::Before, $list->find("bag"));
+    $list->reorder("bag", Placement::Before, "bag");
 
     expect($list->find("bag")->order)->toBe(1);
     expect($list->find("book")->order)->toBe(2);
@@ -120,7 +121,7 @@ test("does nothing if reordering string item after itself", function (): void {
     $list->push(new Item("chair", 3));
     $list->push(new Item("table", 4));
 
-    $list->reorder($list->find("bag"), Placement::After, $list->find("bag"));
+    $list->reorder("bag", Placement::After, "bag");
 
     expect($list->find("bag")->order)->toBe(1);
     expect($list->find("book")->order)->toBe(2);
@@ -202,7 +203,7 @@ test("can apply the order using a callback", function (): void {
         $product->order = $item->order;
     });
 
-    $listing->reorder($listing->find($table), Placement::Before, $listing->find($chair));
+    $listing->reorder($table, Placement::Before, $chair);
 
     expect($bag->order)->toBe(1);
     expect($book->order)->toBe(2);
@@ -232,4 +233,22 @@ test("throws exception if the apply with a callback without Item type hint", fun
     expect(function () use ($listing): void {
         $listing->applyWith(fn (Product $item): int => 1);
     })->toThrow(InvalidApplyWithCallbackException::class, "Your callback must be type hinted with " . Item::class);
+});
+
+test("throws exception if reordering an item that does not exist", function (): void {
+    $listing = new Listing();
+
+    expect(function () use ($listing): void {
+        $listing->reorder("bag", Placement::Before, "table");
+    })->toThrow(ItemNotFoundException::class, "No item match the value");
+});
+
+test("throws exception if reordering an item before one that does not exist", function (): void {
+    $listing = Listing::from([
+        new Item("bag", 1),
+    ]);
+
+    expect(function () use ($listing): void {
+        $listing->reorder("bag", Placement::Before, "table");
+    })->toThrow(ItemNotFoundException::class, "No item match the value");
 });

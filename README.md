@@ -60,7 +60,7 @@ $listing->push(new Item("chair", 2));
 $listing->push(new Item("table", 3));
 $listing->push(new Item("book", 4));
 
-$listing->reorder($book, Placement::Before, $table);
+$listing->reorder("book", Placement::Before, "table");
 
 assert($listing->find("bag")->order === 1);
 assert($listing->find("chair")->order === 2);
