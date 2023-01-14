@@ -6,3 +6,10 @@ services:
     working_dir: /home/ubuntu/app
     volumes:
       - .:/home/ubuntu/app
+
+  composer81:
+    build: ./docker/php/8.1
+    entrypoint: composer
+    working_dir: /home/ubuntu/app
+    volumes:
+      - .:/home/ubuntu/app
