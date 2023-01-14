@@ -55,6 +55,8 @@ final class Listing
     /**
      * @param array<mixed> $values
      * @param Closure(mixed): Item $callback
+     *
+     * @throws InvalidOutOfCallbackException
      */
     public static function outOf(array $values, Closure $callback): self
     {
@@ -70,6 +72,10 @@ final class Listing
         $this->items[] = $item;
     }
 
+    /**
+     * @throws TooManyItemsException
+     * @throws ItemNotFoundException
+     */
     public function reorder(mixed $value, Placement $placement, mixed $reference): void
     {
         $this->sortItems();
@@ -94,6 +100,10 @@ final class Listing
         $this->rewriteItemsIndexes();
     }
 
+    /**
+     * @throws TooManyItemsException
+     * @throws ItemNotFoundException
+     */
     public function find(mixed $value): Item
     {
         $items = array_filter($this->items, function (Item $item) use ($value): bool {
@@ -125,6 +135,8 @@ final class Listing
 
     /**
      * @param Closure(Item): void $callback
+     *
+     * @throws InvalidApplyWithCallbackException
      */
     public function applyWith(Closure $callback): void
     {
@@ -153,6 +165,8 @@ final class Listing
 
     /**
      * @param Closure(mixed, mixed): bool $callback
+     *
+     * @throws InvalidMatchWithCallbackException
      */
     public function matchWith(Closure $callback): void
     {
