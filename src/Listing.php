@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Khalyomede\ReorderBeforeAfter;
 
 use Closure;
+use Khalyomede\ReorderBeforeAfter\Exceptions\BadOutOfCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\InvalidApplyWithCallbackException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\ItemNotFoundException;
 use Khalyomede\ReorderBeforeAfter\Exceptions\TooManyItemsException;
@@ -39,6 +40,18 @@ final class Listing
         }, $items);
 
         return $listing;
+    }
+
+    /**
+     * @param array<mixed> $values
+     */
+    public static function outOf(array $values, Closure $callback): self
+    {
+        self::checkOutOfCallbackSignatureCorrect($callback);
+
+        $items = array_map($callback, $values);
+
+        return self::from($items);
     }
 
     public function push(Item $item): void
@@ -190,6 +203,16 @@ final class Listing
             call_user_func($this->applyWith, $item);
 
             $index += 1;
+        }
+    }
+
+    private static function checkOutOfCallbackSignatureCorrect(Closure $callback): void
+    {
+        $reflection = new ReflectionFunction($callback);
+        $returnType = $reflection->getReturnType();
+
+        if (!($returnType instanceof ReflectionNamedType) || $returnType->getName() !== Item::class) {
+            throw new BadOutOfCallbackException("Your callback must have an Item return type hint");
         }
     }
 }
