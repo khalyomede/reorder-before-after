@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2023-11-28
+
 ### Added
 
 - Support for PHP 8.3 ([#26](https://github.com/khalyomede/reorder-before-after/issues/26)).
