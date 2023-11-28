@@ -15,7 +15,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  php_82:
+  php_83:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -33,6 +33,25 @@ jobs:
         run: docker-compose run composer run updates
       - name: Code modernity check
         run: docker-compose run composer run scan
+
+  php_82:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: docker-compose run composer82 install
+      - name: Tests
+        run: docker-compose run composer82 run test
+      - name: Static analysis
+        run: docker-compose run composer82 run analyse
+      - name: Lint
+        run: docker-compose run composer82 run lint
+      - name: Security check
+        run: docker-compose run composer82 run check
+      - name: Updates check
+        run: docker-compose run composer82 run updates
+      - name: Code modernity check
+        run: docker-compose run composer82 run scan
 
   php_81:
     runs-on: ubuntu-latest
