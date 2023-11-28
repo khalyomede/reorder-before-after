@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support for PHP 8.3 ([#26](https://github.com/khalyomede/reorder-before-after/issues/26)).
 
+### Breaking
+
+- Prevent installing/updating the package if the PHP version is lower than 8.1 ([#26](https://github.com/khalyomede/reorder-before-after/issues/26)).
+
 ## [0.3.0] 2023-01-14
 
 ### Added
